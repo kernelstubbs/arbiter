@@ -9,7 +9,6 @@ x-defaultCONF: &defaultCONF
     - 'PGID=101'
   restart: always
     
-
 x-driver_opts: &driverOpts
   type: nfs
   o: addr=10.10.10.252,rw,bg,intr,soft,nolock
@@ -62,9 +61,7 @@ services:
       - '80:80'
       - '443:443'
     networks:
-      - piHole-net
       - plex-net
-      - port-net
       - torrent-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -204,15 +201,15 @@ services:
       - '58946:58946'
     networks: [torrent-net]
     devices: [/dev/net/tun]
-    sysctls: [net.ipv4.conf.all.rp_filter=2] # Temp Fix for https://github.com/bubuntux/nordvpn/issues/75
+    sysctls: 
+      - net.ipv6.conf.all.disable_ipv6=1
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
+      - NET_RAW
   deluge: # Watchtower currently cannot update containers in a vpn
     container_name: deluge
     image: linuxserver/deluge
     <<: *defaultCONF
-    labels: [com.centurylinklabs.watchtower.enable='false']
     volumes:
       - delugeCFG:/config
       - downloads:/downloads
@@ -222,7 +219,6 @@ services:
     container_name: jackett
     image: linuxserver/jackett
     <<: *defaultCONF
-    labels: [com.centurylinklabs.watchtower.enable='false']
     volumes:
       - jackettCFG:/config
       - TMP:/downloads
@@ -249,16 +245,6 @@ volumes:
     driver_opts:
       <<: *driverOpts
       device: ':/volume1/docker/jackett/config'
-  piETC:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/pihole/etc-pihole'
-  piMasq:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/pihole/etc-dnsmasq.d'
   plexCFG:
     <<: *nfsDriver
     driver_opts:
@@ -279,11 +265,6 @@ volumes:
     driver_opts:
       <<: *driverOpts
       device: ':/volume1/docker/plex/library/television'
-  portainerDAT:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/portainer/data'
   radarrCFG: 
     <<: *nfsDriver
     driver_opts:
