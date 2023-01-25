@@ -10,9 +10,9 @@ x-defaultCONF: &defaultCONF
   restart: always
     
 x-driver_opts: &driverOpts
-  type: nfs
-  o: addr=10.10.10.252,rw,bg,intr,soft,nolock
-x-nfs-driver: &nfsDriver
+  type: cifs
+  o: "username=arbiter,password=master343chief" # This is not the real password, YourMom is.
+x-cifs-driver: &cifsDriver
   driver: local
 
 services: 
@@ -65,7 +65,7 @@ services:
       - torrent-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - traefikETC:/etc/traefik
+      - ./volumes/traefikETC:/etc/traefik
     
 
 ########################################################################
@@ -93,7 +93,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.plex.rule=Host(`plex.beowulf.cc`)'
+      - 'traefik.http.routers.plex.rule=Host(`plex.arbiter.beowulf.cc`)'
       - 'traefik.http.routers.plex.entrypoints=websecure'
       - 'traefik.http.routers.plex.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.plex.tls.domains[0].sans=*.beowulf.cc'
@@ -111,7 +111,7 @@ services:
       - '32469:32469/udp'
     networks: [plex-net]
     volumes:
-      - plexCFG:/config
+      - ./volumes/plexCFG:/config
       - plexLib:/data
   radarr:
     container_name: radarr
@@ -121,7 +121,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.radarr.rule=Host(`radarr.beowulf.cc`)'
+      - 'traefik.http.routers.radarr.rule=Host(`radarr.arbiter.beowulf.cc`)'
       - 'traefik.http.routers.radarr.entrypoints=websecure'
       - 'traefik.http.routers.radarr.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.radarr.tls.domains[0].sans=*.beowulf.cc'
@@ -132,7 +132,7 @@ services:
       - torrent-net
       - plex-net
     volumes:
-      - radarrCFG:/config
+      - ./volumes/radarrCFG:/config
       - plexMovies:/movies
       - downloads:/downloads
   sonarr:
@@ -143,7 +143,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.sonarr.rule=Host(`sonarr.beowulf.cc`)'
+      - 'traefik.http.routers.sonarr.rule=Host(`sonarr.arbiter.beowulf.cc`)'
       - 'traefik.http.routers.sonarr.entrypoints=websecure'
       - 'traefik.http.routers.sonarr.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.sonarr.tls.domains[0].sans=*.beowulf.cc'
@@ -154,7 +154,7 @@ services:
       - torrent-net
       - plex-net
     volumes:
-      - sonarrCFG:/config
+      - ./volumes/sonarrCFG:/config
       - plexTV:/tv
       - downloads:/downloads
 
@@ -173,7 +173,7 @@ services:
       - 'traefik.enable=true'
       - 'traefik.docker.network=docker_torrent-net'
       # deluge
-      - 'traefik.http.routers.deluge.rule=Host(`deluge.beowulf.cc`)'
+      - 'traefik.http.routers.deluge.rule=Host(`deluge.arbiter.beowulf.cc`)'
       - 'traefik.http.routers.deluge.entrypoints=websecure'
       - 'traefik.http.routers.deluge.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.deluge.tls.domains[0].sans=*.beowulf.cc'
@@ -181,7 +181,7 @@ services:
       - 'traefik.http.routers.deluge.service=deluge'
       - 'traefik.http.services.deluge.loadbalancer.server.port=8112'
       # jackett
-      - 'traefik.http.routers.jackett.rule=Host(`jackett.beowulf.cc`)'
+      - 'traefik.http.routers.jackett.rule=Host(`jackett.arbiter.beowulf.cc`)'
       - 'traefik.http.routers.jackett.entrypoints=websecure'
       - 'traefik.http.routers.jackett.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.jackett.tls.domains[0].sans=*.beowulf.cc'
@@ -189,7 +189,7 @@ services:
       - 'traefik.http.routers.jackett.service=jackett'
       - 'traefik.http.services.jackett.loadbalancer.server.port=9117'
       # vpn
-      - 'traefik.http.routers.vpn.rule=Host(`vpn.beowulf.cc`)'
+      - 'traefik.http.routers.vpn.rule=Host(`vpn.arbiter.beowulf.cc`)'
       - 'traefik.http.routers.vpn.entrypoints=websecure'
       - 'traefik.http.routers.vpn.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.vpn.tls.domains[0].sans=*.beowulf.cc'
@@ -211,7 +211,7 @@ services:
     image: linuxserver/deluge
     <<: *defaultCONF
     volumes:
-      - delugeCFG:/config
+      - ./volumes/delugeCFG:/config
       - downloads:/downloads
     network_mode: service:vpn
     depends_on: [vpn]
@@ -220,8 +220,8 @@ services:
     image: linuxserver/jackett
     <<: *defaultCONF
     volumes:
-      - jackettCFG:/config
-      - TMP:/downloads
+      - ./volumes/jackettCFG:/config
+      - downloads:/downloads
     network_mode: service:vpn
     depends_on: [vpn]
     
@@ -230,58 +230,19 @@ networks:
   torrent-net:
 
 volumes:
-  delugeCFG:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/deluge/config'
   downloads:
-    <<: *nfsDriver
     driver_opts:
       <<: *driverOpts
-      device: ':/volume1/docker/downloads'
-  jackettCFG:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/jackett/config'
-  plexCFG:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/plex/config'
+      device: '//10.10.10.252/arbiter/downloads'
   plexLib:
-    <<: *nfsDriver
     driver_opts:
       <<: *driverOpts
-      device: ':/volume1/docker/plex/library'
+      device: '//10.10.10.252/arbiter/plexlib'
   plexMovies:
-    <<: *nfsDriver
     driver_opts:
       <<: *driverOpts
-      device: ':/volume1/docker/plex/library/movies'
+      device: '//10.10.10.252/plex/arbiter/movies'
   plexTV:
-    <<: *nfsDriver
     driver_opts:
       <<: *driverOpts
-      device: ':/volume1/docker/plex/library/television'
-  radarrCFG: 
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/radarr/config'
-  sonarrCFG:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/sonarr/config'
-  TMP:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/tmp'
-  traefikETC:
-    <<: *nfsDriver
-    driver_opts:
-      <<: *driverOpts
-      device: ':/volume1/docker/traefik/etc'
+      device: '//10.10.10.252/plex/arbiter/television'
