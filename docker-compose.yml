@@ -248,8 +248,8 @@ volumes:
   plexMovies:
     driver_opts:
       <<: *driverOpts
-      device: '//10.10.10.252/plex/arbiter/movies'
+      device: '//10.10.10.252/arbiter/movies'
   plexTV:
     driver_opts:
       <<: *driverOpts
-      device: '//10.10.10.252/plex/arbiter/television'
+      device: '//10.10.10.252/arbiter/television'
