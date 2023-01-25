@@ -43,7 +43,7 @@ services:
     labels: 
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.traefik.rule=Host(`traefik.beowulf.cc`)'
+      - 'traefik.http.routers.traefik.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/traefik`)'
       - 'traefik.http.services.traefik.loadbalancer.server.port=8080'
       - 'traefik.http.services.traefik.loadbalancer.server.scheme=http'
       # HTTP ==> HTTPS
@@ -100,7 +100,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.plex.rule=Host(`plex.arbiter.beowulf.cc`)'
+      - 'traefik.http.routers.plex.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/plex`)'
       - 'traefik.http.routers.plex.entrypoints=websecure'
       - 'traefik.http.routers.plex.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.plex.tls.domains[0].sans=*.beowulf.cc'
@@ -128,7 +128,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.radarr.rule=Host(`radarr.arbiter.beowulf.cc`)'
+      - 'traefik.http.routers.radarr.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/radarr`)'
       - 'traefik.http.routers.radarr.entrypoints=websecure'
       - 'traefik.http.routers.radarr.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.radarr.tls.domains[0].sans=*.beowulf.cc'
@@ -150,7 +150,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable=true'
       - 'traefik.enable=true'
-      - 'traefik.http.routers.sonarr.rule=Host(`sonarr.arbiter.beowulf.cc`)'
+      - 'traefik.http.routers.sonarr.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/sonarr`)'
       - 'traefik.http.routers.sonarr.entrypoints=websecure'
       - 'traefik.http.routers.sonarr.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.sonarr.tls.domains[0].sans=*.beowulf.cc'
@@ -180,7 +180,7 @@ services:
       - 'traefik.enable=true'
       - 'traefik.docker.network=docker_torrent-net'
       # deluge
-      - 'traefik.http.routers.deluge.rule=Host(`deluge.arbiter.beowulf.cc`)'
+      - 'traefik.http.routers.deluge.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/deluge`)'
       - 'traefik.http.routers.deluge.entrypoints=websecure'
       - 'traefik.http.routers.deluge.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.deluge.tls.domains[0].sans=*.beowulf.cc'
@@ -188,7 +188,7 @@ services:
       - 'traefik.http.routers.deluge.service=deluge'
       - 'traefik.http.services.deluge.loadbalancer.server.port=8112'
       # jackett
-      - 'traefik.http.routers.jackett.rule=Host(`jackett.arbiter.beowulf.cc`)'
+      - 'traefik.http.routers.jackett.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/jackett`)'
       - 'traefik.http.routers.jackett.entrypoints=websecure'
       - 'traefik.http.routers.jackett.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.jackett.tls.domains[0].sans=*.beowulf.cc'
@@ -196,7 +196,7 @@ services:
       - 'traefik.http.routers.jackett.service=jackett'
       - 'traefik.http.services.jackett.loadbalancer.server.port=9117'
       # vpn
-      - 'traefik.http.routers.vpn.rule=Host(`vpn.arbiter.beowulf.cc`)'
+      - 'traefik.http.routers.vpn.rule=Host(`arbiter.beowulf.cc`)&&(Path(`/vpn`)'
       - 'traefik.http.routers.vpn.entrypoints=websecure'
       - 'traefik.http.routers.vpn.tls.domains[0].main=beowulf.cc'
       - 'traefik.http.routers.vpn.tls.domains[0].sans=*.beowulf.cc'
