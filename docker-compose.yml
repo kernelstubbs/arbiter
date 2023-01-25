@@ -12,8 +12,6 @@ x-defaultCONF: &defaultCONF
 x-driver_opts: &driverOpts
   type: cifs
   o: "username=arbiter,password=master343chief" # This is not the real password, YourMom is.
-x-cifs-driver: &cifsDriver
-  driver: local
 
 services: 
 
